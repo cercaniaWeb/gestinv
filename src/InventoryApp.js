@@ -408,7 +408,7 @@ const InventoryApp = () => {
       {/* Product Modal (Add/Edit) */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-3 z-50 overflow-y-auto">
-          <div className="bg-[#1e1e2e] rounded-lg sm:rounded-xl p-4 sm:p-6 w-full max-w-sm sm:max-w-md shadow-2xl border border-white/10 relative my-4 animate-pop">
+          <div className="bg-[#1e1e2e] rounded-lg sm:rounded-xl p-4 sm:p-6 w-full max-w-sm sm:max-w-md shadow-2xl border border-white/10 relative my-4 animate-pop max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center pb-3 border-b border-white/10 mb-4">
               <h2 className="text-xl font-bold text-white">
                 {editingProduct ? 'Editar Producto' : 'Nuevo Producto'}
