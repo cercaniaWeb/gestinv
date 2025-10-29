@@ -44,8 +44,7 @@ const InventoryApp = () => {
     cantidad: '',
     sistemamedida: 'unidad',
     fotoproducto: '',
-    fotocodigobarras: '',
-    barcodeNumber: '', // Added field to store extracted barcode number
+    barcodeNumber: '', // Field to store extracted barcode number (no need to store barcode image)
     procedencia: 'Estrellita'
   });
 
@@ -142,16 +141,19 @@ const InventoryApp = () => {
                     // Extracted barcode number found!
                     setFormData(prev => ({
                       ...prev,
-                      barcodeNumber: result.codeResult.code // Store the extracted barcode number
+                      barcodeNumber: result.codeResult.code, // Store the extracted barcode number
+                      fotocodigobarras: '' // Clear the barcode image since we have the number
                     }));
                     showNotification(`Código de barras detectado: ${result.codeResult.code}`, 'success');
                   } else {
                     console.log("No barcode detected in the image");
+                    showNotification("No se pudo detectar un código de barras en la imagen", 'error');
                   }
                 });
               };
             } catch (scanError) {
               console.error("Error scanning barcode:", scanError);
+              showNotification("Error al escanear el código de barras", 'error');
             }
           }
         } catch (error) {
@@ -277,7 +279,6 @@ const InventoryApp = () => {
       sistemamedida: product.sistemamedida,
       // Load Base64 string or URL
       fotoproducto: product.fotoproducto, 
-      fotocodigobarras: product.fotocodigobarras,
       barcodeNumber: product.barcodeNumber || '', // Preserve the barcode number if it exists
       procedencia: product.procedencia
     });
@@ -316,7 +317,6 @@ const InventoryApp = () => {
       cantidad: '',
       sistemamedida: 'unidad',
       fotoproducto: 'https://placehold.co/300x200/555555/ffffff?text=Producto', // Default placeholder URL
-      fotocodigobarras: 'https://placehold.co/300x100/333333/ffffff?text=CDB', // Default placeholder URL
       barcodeNumber: '', // Initialize barcode number as empty
       procedencia: 'Estrellita'
     });
@@ -635,38 +635,43 @@ const InventoryApp = () => {
               </div>
               {/* -------------------------------------------------------- */}
 
-              {/* --- MODIFIED: Foto Código de Barras Input (Use Camera/File) --- */}
+              {/* --- MODIFIED: Código de Barras Input --- */}
               <div className="space-y-1">
-                <label className="text-white font-medium text-sm">Foto del Código de Barras (Cámara/Archivo)</label>
-                 {/* Image Preview */}
-                {formData.fotocodigobarras && (
-                  <div className="mb-2">
-                    <img 
-                      src={formData.fotocodigobarras} 
-                      alt="Previsualización del Código de Barras" 
-                      className="w-full h-16 object-contain rounded-lg border border-white/20 bg-white/10 p-1" 
-                    />
+                <label className="text-white font-medium text-sm">Código de Barras</label>
+                <input
+                  type="text"
+                  name="barcodeNumber"
+                  value={formData.barcodeNumber || ''}
+                  onChange={handleInputChange}
+                  placeholder="Ingrese el código de barras o escanée una imagen"
+                  className="w-full p-2 sm:p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
+                />
+                {/* Input oculto para la imagen del código de barras (se eliminará después de extraer el número) */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  name="fotocodigobarras"
+                  onChange={handleInputChange}
+                  className="hidden"
+                />
+                {/* Botón para escanear código de barras */}
+                <button
+                  type="button"
+                  onClick={() => document.querySelector('input[name="fotocodigobarras"]').click()}
+                  className="w-full mt-2 px-3 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-lg transition duration-200 text-sm shadow-md shadow-blue-500/30"
+                >
+                  Escanear Código de Barras
+                </button>
+                {/* Mostrar mensaje si se extrajo un código de barras */}
+                {formData.barcodeNumber && (
+                  <div className="mt-2 p-2 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
+                    <p className="text-emerald-400 font-medium text-xs">Código de barras detectado automáticamente</p>
+                    <p className="text-white font-mono text-sm">{formData.barcodeNumber}</p>
                   </div>
                 )}
-                <input
-                  type="file" // Changed from url to file
-                  accept="image/*" // Accept only image files
-                  capture="environment" // Request rear camera on mobile
-                  name="fotocodigobarras"
-                  // NOTE: Cannot set value for type="file" inputs
-                  onChange={handleInputChange}
-                  className="w-full p-2 text-xs border border-white/20 rounded-lg bg-white/10 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-violet-500/80 file:text-white hover:file:bg-violet-600/90 transition duration-200"
-                />
               </div>
               {/* -------------------------------------------------------- */}
-
-              {/* Display extracted barcode number if available */}
-              {formData.barcodeNumber && (
-                <div className="mt-3 p-3 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
-                  <p className="text-emerald-400 font-medium text-sm">Código de barras detectado:</p>
-                  <p className="text-white font-mono text-base">{formData.barcodeNumber}</p>
-                </div>
-              )}
 
               <button
                 type="submit"
