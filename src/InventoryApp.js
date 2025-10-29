@@ -34,6 +34,8 @@ const InventoryApp = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showConfirm, setShowConfirm] = useState(null); // Stores ID of product to delete
+  const [saving, setSaving] = useState(false); // Track saving state
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' }); // Notification state
   const [formData, setFormData] = useState({
     name: '',
     preciopublico: '',
@@ -150,13 +152,25 @@ const InventoryApp = () => {
     });
   }
 
+  // Function to show notifications
+  const showNotification = (message, type = 'success') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: '' });
+    }, 3000); // Hide notification after 3 seconds
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    setSaving(true); // Set saving state to show loading indicator
     
     // Simple validation
     const { name, preciopublico, costoproveedor, cantidad } = formData;
     if (!name || isNaN(parseFloat(preciopublico)) || isNaN(parseFloat(costoproveedor)) || isNaN(parseInt(cantidad))) {
       console.error("Formulario incompleto o con valores inválidos.");
+      showNotification("Por favor, complete todos los campos correctamente.", 'error');
+      setSaving(false);
       return; // Stop submission if validation fails
     }
 
@@ -189,8 +203,14 @@ const InventoryApp = () => {
       // Refresh product list
       await fetchProducts();
       handleModalClose();
+      
+      // Show success notification
+      showNotification(editingProduct ? "Producto actualizado exitosamente" : "Producto agregado exitosamente", 'success');
     } catch (error) {
       console.error("Error al guardar producto:", error);
+      showNotification("Error al guardar el producto. Por favor, inténtelo de nuevo.", 'error');
+    } finally {
+      setSaving(false); // Reset saving state
     }
   };
 
@@ -587,9 +607,21 @@ const InventoryApp = () => {
 
               <button
                 type="submit"
-                className="mt-3 px-4 py-2.5 bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-500 text-white font-bold rounded-lg transition duration-200 text-base shadow-md shadow-violet-500/30"
+                disabled={saving}
+                className={`mt-3 px-4 py-2.5 bg-gradient-to-r from-violet-500 to-pink-500 text-white font-bold rounded-lg transition duration-200 text-base shadow-md shadow-violet-500/30 ${
+                  saving 
+                    ? 'opacity-70 cursor-not-allowed' 
+                    : 'hover:from-violet-600 hover:to-pink-500'
+                }`}
               >
-                {editingProduct ? 'Actualizar Producto' : 'Crear Producto'}
+                {saving ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    {editingProduct ? 'Actualizando...' : 'Guardando...'}
+                  </div>
+                ) : (
+                  editingProduct ? 'Actualizar Producto' : 'Crear Producto'
+                )}
               </button>
             </form>
           </div>
@@ -603,6 +635,19 @@ const InventoryApp = () => {
           onConfirm={confirmDelete}
           onCancel={() => setShowConfirm(null)}
         />
+      )}
+
+      {/* Notification Toast */}
+      {notification.show && (
+        <div 
+          className={`fixed top-4 right-4 z-[1000] px-6 py-3 rounded-lg shadow-lg text-white font-semibold text-sm max-w-xs animate-fadeIn ${
+            notification.type === 'success' 
+              ? 'bg-emerald-500' 
+              : 'bg-red-500'
+          }`}
+        >
+          {notification.message}
+        </div>
       )}
     </div>
   );
