@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Download, Star, X } from 'lucide-react';
 import { supabase } from './supabaseClient';
+import { compressImage } from './utils/imageCompressor';
 
 // Helper component for confirmation dialogs
 const ConfirmationDialog = ({ message, onConfirm, onCancel }) => (
@@ -82,24 +83,47 @@ const InventoryApp = () => {
     }
   };
 
-  // --- MODIFIED: Handle file input and Base64 conversion ---
-  const handleInputChange = (e) => {
+  // --- MODIFIED: Handle file input and Base64 conversion with compression ---
+  const handleInputChange = async (e) => {
     const { name, value, type, files } = e.target;
     
     if (type === 'file' && files && files.length > 0) {
       const file = files[0];
-      const reader = new FileReader();
-
-      // Convert file to Base64 string
-      reader.onloadend = () => {
-        setFormData(prev => ({
-          ...prev,
-          [name]: reader.result // Store Base64 string (data URL)
-        }));
-      };
-
-      reader.readAsDataURL(file);
-
+      
+      // Only process image files
+      if (file.type.startsWith('image/')) {
+        try {
+          // Compress the image
+          const compressedImage = await compressImage(file, 800, 600, 0.7);
+          
+          // Update form data with compressed image
+          setFormData(prev => ({
+            ...prev,
+            [name]: compressedImage // Store compressed Base64 string (data URL)
+          }));
+        } catch (error) {
+          console.error("Error compressing image:", error);
+          // Fallback to original method if compression fails
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setFormData(prev => ({
+              ...prev,
+              [name]: reader.result // Store Base64 string (data URL)
+            }));
+          };
+          reader.readAsDataURL(file);
+        }
+      } else {
+        // Handle non-image files (if any)
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFormData(prev => ({
+            ...prev,
+            [name]: reader.result // Store Base64 string (data URL)
+          }));
+        };
+        reader.readAsDataURL(file);
+      }
     } else {
       // Handle standard text/number inputs
       setFormData(prev => ({
