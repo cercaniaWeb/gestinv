@@ -4,20 +4,20 @@ import { supabase } from './supabaseClient';
 
 // Helper component for confirmation dialogs
 const ConfirmationDialog = ({ message, onConfirm, onCancel }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[2000]">
-    <div className="bg-[#1e1e2e] rounded-xl p-6 w-full max-w-sm shadow-2xl border border-white/10 animate-pop">
-      <h3 className="text-xl font-bold mb-4 text-pink-400">Confirmación</h3>
-      <p className="text-white/80">{message}</p>
-      <div className="flex justify-around mt-6 space-x-3">
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-3 z-[2000]">
+    <div className="bg-[#1e1e2e] rounded-lg p-4 w-full max-w-xs shadow-2xl border border-white/10 animate-pop">
+      <h3 className="text-lg font-bold mb-3 text-pink-400">Confirmación</h3>
+      <p className="text-white/80 text-sm">{message}</p>
+      <div className="flex flex-col sm:flex-row gap-2 mt-4">
         <button
           onClick={onConfirm}
-          className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg flex items-center justify-center gap-2"
+          className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200 shadow-lg flex items-center justify-center gap-1 text-sm"
         >
-          <Trash2 size={16} /> Confirmar
+          <Trash2 size={14} /> Confirmar
         </button>
         <button
           onClick={onCancel}
-          className="flex-1 px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg transition duration-200 border border-white/20"
+          className="flex-1 px-3 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg transition duration-200 border border-white/20 text-sm"
         >
           Cancelar
         </button>
@@ -287,93 +287,93 @@ const InventoryApp = () => {
       <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-5 text-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-500 mx-auto"></div>
-          <p className="mt-4">Cargando inventario...</p>
+          <p className="mt-4 text-sm sm:text-base">Cargando inventario...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-5 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] p-3 sm:p-5 text-white">
       {/* Header Section */}
-      <div className="bg-[#1e1e2e] bg-opacity-95 backdrop-blur-md rounded-xl p-5 mb-5 shadow-2xl border border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="flex flex-col gap-1 flex-grow">
-          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-violet-500 to-pink-500 bg-clip-text text-transparent">
+      <div className="bg-[#1e1e2e] bg-opacity-95 backdrop-blur-md rounded-xl p-4 mb-4 shadow-2xl border border-white/10 flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-violet-500 to-pink-500 bg-clip-text text-transparent">
             Inventario de Abarrotes
           </h1>
         </div>
         
         {/* Search */}
-        <div className="relative w-full max-w-sm order-3 md:order-none">
-          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60" />
+        <div className="relative w-full">
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60" />
           <input
             type="text"
             placeholder="Buscar productos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full py-2.5 pl-10 pr-4 border border-white/20 rounded-full text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/30 transition duration-300"
+            className="w-full py-2 pl-9 pr-3 border border-white/20 rounded-full text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30 transition duration-300"
           />
         </div>
 
-        {/* Button Group */}
-        <div className="flex gap-3 flex-wrap justify-center md:justify-end w-full md:w-auto order-2 md:order-none">
+        {/* Button Group - Stack on mobile, row on larger screens */}
+        <div className="flex flex-wrap gap-2 justify-center w-full">
           <button
             onClick={() => exportData('csv')}
-            className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full transition duration-200 border border-white/20 text-sm"
+            className="flex items-center gap-1 sm:gap-2 px-3 py-2 text-xs sm:text-sm bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full transition duration-200 border border-white/20 min-w-[120px]"
           >
-            <Download size={18} />
-            Exportar CSV
+            <Download size={16} className="min-w-[16px]" />
+            <span>CSV</span>
           </button>
           <button
             onClick={() => exportData('json')}
-            className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full transition duration-200 border border-white/20 text-sm"
+            className="flex items-center gap-1 sm:gap-2 px-3 py-2 text-xs sm:text-sm bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full transition duration-200 border border-white/20 min-w-[120px]"
           >
-            <Download size={18} />
-            Exportar JSON
+            <Download size={16} className="min-w-[16px]" />
+            <span>JSON</span>
           </button>
           <button
             onClick={handleAddNew}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-500 text-white font-bold rounded-full transition duration-200 shadow-lg shadow-violet-500/30 text-sm"
+            className="flex items-center gap-1 sm:gap-2 px-3 py-2 text-xs sm:text-sm bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-500 text-white font-bold rounded-full transition duration-200 shadow-lg shadow-violet-500/30 min-w-[130px]"
           >
-            <Plus size={18} />
-            Nuevo Producto
+            <Plus size={16} className="min-w-[16px]" />
+            <span>Nuevo</span>
           </button>
         </div>
       </div>
 
       {/* Main Content Card */}
-      <div className="bg-[#1e1e2e] bg-opacity-95 backdrop-blur-md rounded-xl p-6 shadow-2xl border border-white/10 min-h-[300px]">
+      <div className="bg-[#1e1e2e] bg-opacity-95 backdrop-blur-md rounded-xl p-4 shadow-2xl border border-white/10 min-h-[300px]">
         {filteredProducts.length === 0 ? (
-          <div className="text-center p-10 text-white/60">
-            <div className="text-5xl mb-4 opacity-70">📦</div>
-            <h3 className="text-xl font-semibold">No hay productos registrados</h3>
-            <p className="mt-2">{searchTerm ? 'No se encontraron productos que coincidan con tu búsqueda' : 'Agrega tu primer producto para comenzar.'}</p>
+          <div className="text-center p-6 text-white/60">
+            <div className="text-4xl mb-3 opacity-70">📦</div>
+            <h3 className="text-lg sm:text-xl font-semibold">No hay productos registrados</h3>
+            <p className="mt-2 text-sm">{searchTerm ? 'No se encontraron productos que coincidan con tu búsqueda' : 'Agrega tu primer producto para comenzar.'}</p>
             {!searchTerm && (
               <button
                 onClick={handleAddNew}
-                className="mt-5 flex items-center gap-2 mx-auto px-6 py-2 bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-500 text-white font-bold rounded-full transition duration-200 shadow-lg shadow-violet-500/30"
+                className="mt-4 flex items-center gap-1 sm:gap-2 mx-auto px-4 py-2 bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-500 text-white font-bold rounded-full transition duration-200 shadow-lg shadow-violet-500/30 text-sm"
               >
-                <Plus size={18} />
+                <Plus size={16} />
                 Agregar Producto
               </button>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filteredProducts.map(product => (
-              <div key={product.id} className="bg-white/5 rounded-xl p-4 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-violet-500/20 hover:bg-white/10 border border-white/10">
+              <div key={product.id} className="bg-white/5 rounded-lg p-3 shadow-md transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/20 hover:bg-white/10 border border-white/10">
                 <img
                   src={product.fotoproducto}
                   alt={product.name}
-                  className="w-full h-36 object-cover rounded-lg mb-4 bg-white/10 border border-white/10"
+                  className="w-full h-24 object-cover rounded-lg mb-3 bg-white/10 border border-white/10"
                   onError={(e) => { 
                     e.target.onerror = null; 
                     e.target.src = `https://placehold.co/300x200/94a3b8/ffffff?text=${encodeURIComponent(product.name.substring(0, 10))}`;
                   }}
                 />
-                <h3 className="text-lg font-semibold text-white truncate">{product.name}</h3>
+                <h3 className="text-base font-semibold text-white truncate">{product.name}</h3>
                 
-                <div className="mt-2 space-y-1 text-sm text-white/80">
+                <div className="mt-2 space-y-0.5 text-xs sm:text-sm text-white/80">
                   <p><strong>P. Público:</strong> <span className="text-violet-400 font-bold">${product.preciopublico.toFixed(2)}</span></p>
                   <p><strong>Costo Prov.:</strong> ${product.costoproveedor.toFixed(2)}</p>
                   <p><strong>Ganancia:</strong> <span className="text-emerald-400 font-medium">${(product.preciopublico - product.costoproveedor).toFixed(2)}</span></p>
@@ -383,20 +383,20 @@ const InventoryApp = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-4">
+                <div className="flex gap-2 mt-3">
                   <button
                     onClick={() => handleEdit(product)}
-                    className="flex-1 px-3 py-2 text-yellow-400 bg-yellow-400/10 hover:bg-yellow-400/20 rounded-lg transition duration-200 flex items-center justify-center gap-1 text-sm font-medium"
+                    className="flex-1 px-2 py-1.5 text-xs sm:text-sm text-yellow-400 bg-yellow-400/10 hover:bg-yellow-400/20 rounded-lg transition duration-200 flex items-center justify-center gap-0.5 text-center"
                   >
-                    <Edit size={16} />
-                    Editar
+                    <Edit size={14} />
+                    <span>E</span>
                   </button>
                   <button
                     onClick={() => handleDelete(product.id)}
-                    className="flex-1 px-3 py-2 text-red-500 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition duration-200 flex items-center justify-center gap-1 text-sm font-medium"
+                    className="flex-1 px-2 py-1.5 text-xs sm:text-sm text-red-500 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition duration-200 flex items-center justify-center gap-0.5 text-center"
                   >
-                    <Trash2 size={16} />
-                    Eliminar
+                    <Trash2 size={14} />
+                    <span>D</span>
                   </button>
                 </div>
               </div>
@@ -407,34 +407,34 @@ const InventoryApp = () => {
 
       {/* Product Modal (Add/Edit) */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-[#1e1e2e] rounded-xl p-6 w-full max-w-xl shadow-2xl border border-white/10 relative my-8 animate-pop">
-            <div className="flex justify-between items-center pb-4 border-b border-white/10 mb-6">
-              <h2 className="text-2xl font-bold text-white">
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-3 z-50 overflow-y-auto">
+          <div className="bg-[#1e1e2e] rounded-lg sm:rounded-xl p-4 sm:p-6 w-full max-w-sm sm:max-w-md shadow-2xl border border-white/10 relative my-4 animate-pop">
+            <div className="flex justify-between items-center pb-3 border-b border-white/10 mb-4">
+              <h2 className="text-xl font-bold text-white">
                 {editingProduct ? 'Editar Producto' : 'Nuevo Producto'}
               </h2>
-              <button onClick={handleModalClose} className="text-white/60 hover:text-white transition duration-200 p-2 rounded-full hover:bg-white/10">
-                <X size={24} />
+              <button onClick={handleModalClose} className="text-white/60 hover:text-white transition duration-200 p-1 rounded-full hover:bg-white/10">
+                <X size={20} />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-3">
               {/* Nombre del Producto */}
-              <div className="col-span-1 md:col-span-2 space-y-1">
-                <label className="text-white font-medium">Nombre del Producto</label>
+              <div className="space-y-1">
+                <label className="text-white font-medium text-sm">Nombre del Producto</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
+                  className="w-full p-2 sm:p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
                 />
               </div>
 
               {/* Precio Público */}
               <div className="space-y-1">
-                <label className="text-white font-medium">Precio Público ($)</label>
+                <label className="text-white font-medium text-sm">Precio Público ($)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -442,13 +442,13 @@ const InventoryApp = () => {
                   value={formData.preciopublico}
                   onChange={handleInputChange}
                   required
-                  className="w-full p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
+                  className="w-full p-2 sm:p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
                 />
               </div>
 
               {/* Costo al Proveedor */}
               <div className="space-y-1">
-                <label className="text-white font-medium">Costo al que me lo dan ($)</label>
+                <label className="text-white font-medium text-sm">Costo al que me lo dan ($)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -456,32 +456,32 @@ const InventoryApp = () => {
                   value={formData.costoproveedor}
                   onChange={handleInputChange}
                   required
-                  className="w-full p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
+                  className="w-full p-2 sm:p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
                 />
               </div>
 
               {/* Cantidad */}
               <div className="space-y-1">
-                <label className="text-white font-medium">Cantidad</label>
+                <label className="text-white font-medium text-sm">Cantidad</label>
                 <input
                   type="number"
                   name="cantidad"
                   value={formData.cantidad}
                   onChange={handleInputChange}
                   required
-                  className="w-full p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
+                  className="w-full p-2 sm:p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200"
                 />
               </div>
 
               {/* Sistema de Medida */}
               <div className="space-y-1">
-                <label className="text-white font-medium">Sistema de Medida</label>
+                <label className="text-white font-medium text-sm">Sistema de Medida</label>
                 <select
                   name="sistemamedida"
                   value={formData.sistemamedida}
                   onChange={handleInputChange}
                   required
-                  className="w-full p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200 appearance-none bg-right-8 bg-no-repeat"
+                  className="w-full p-2 sm:p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200 appearance-none bg-right-8 bg-no-repeat"
                   style={{backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E")`, backgroundSize: '1em', backgroundPosition: 'right 12px center'}}
                 >
                   <option value="unidad">Unidad</option>
@@ -495,14 +495,14 @@ const InventoryApp = () => {
               </div>
 
               {/* Procedencia */}
-              <div className="space-y-1 col-span-1 md:col-span-2">
-                <label className="text-white font-medium">Procedencia (Calidad)</label>
+              <div className="space-y-1">
+                <label className="text-white font-medium text-sm">Procedencia (Calidad)</label>
                 <select
                   name="procedencia"
                   value={formData.procedencia}
                   onChange={handleInputChange}
                   required
-                  className="w-full p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200 appearance-none bg-right-8 bg-no-repeat"
+                  className="w-full p-2 sm:p-3 border border-white/20 rounded-lg text-sm bg-white/10 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/50 transition duration-200 appearance-none bg-right-8 bg-no-repeat"
                   style={{backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23ffffff' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E")`, backgroundSize: '1em', backgroundPosition: 'right 12px center'}}
                 >
                   <option value="Estrellita">Estrellita (⭐)</option>
@@ -512,15 +512,15 @@ const InventoryApp = () => {
               </div>
 
               {/* --- MODIFIED: Foto Producto Input (Use Camera/File) --- */}
-              <div className="space-y-1 col-span-1 md:col-span-2">
-                <label className="text-white font-medium">Foto del Producto (Cámara/Archivo)</label>
+              <div className="space-y-1">
+                <label className="text-white font-medium text-sm">Foto del Producto (Cámara/Archivo)</label>
                 {/* Image Preview */}
                 {formData.fotoproducto && (
                   <div className="mb-2">
                     <img 
                       src={formData.fotoproducto} 
                       alt="Previsualización del Producto" 
-                      className="w-full h-32 object-contain rounded-lg border border-white/20 bg-white/10 p-1" 
+                      className="w-full h-20 object-contain rounded-lg border border-white/20 bg-white/10 p-1" 
                     />
                   </div>
                 )}
@@ -531,21 +531,21 @@ const InventoryApp = () => {
                   name="fotoproducto"
                   // NOTE: Cannot set value for type="file" inputs
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-white/20 rounded-lg text-sm bg-white/10 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-500/80 file:text-white hover:file:bg-violet-600/90 transition duration-200"
+                  className="w-full p-2 text-xs border border-white/20 rounded-lg bg-white/10 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-violet-500/80 file:text-white hover:file:bg-violet-600/90 transition duration-200"
                 />
               </div>
               {/* -------------------------------------------------------- */}
 
               {/* --- MODIFIED: Foto Código de Barras Input (Use Camera/File) --- */}
-              <div className="space-y-1 col-span-1 md:col-span-2">
-                <label className="text-white font-medium">Foto del Código de Barras (Cámara/Archivo)</label>
+              <div className="space-y-1">
+                <label className="text-white font-medium text-sm">Foto del Código de Barras (Cámara/Archivo)</label>
                  {/* Image Preview */}
                 {formData.fotocodigobarras && (
                   <div className="mb-2">
                     <img 
                       src={formData.fotocodigobarras} 
                       alt="Previsualización del Código de Barras" 
-                      className="w-full h-20 object-contain rounded-lg border border-white/20 bg-white/10 p-1" 
+                      className="w-full h-16 object-contain rounded-lg border border-white/20 bg-white/10 p-1" 
                     />
                   </div>
                 )}
@@ -556,14 +556,14 @@ const InventoryApp = () => {
                   name="fotocodigobarras"
                   // NOTE: Cannot set value for type="file" inputs
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-white/20 rounded-lg text-sm bg-white/10 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-500/80 file:text-white hover:file:bg-violet-600/90 transition duration-200"
+                  className="w-full p-2 text-xs border border-white/20 rounded-lg bg-white/10 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-violet-500/80 file:text-white hover:file:bg-violet-600/90 transition duration-200"
                 />
               </div>
               {/* -------------------------------------------------------- */}
 
               <button
                 type="submit"
-                className="col-span-1 md:col-span-2 mt-4 px-6 py-3 bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-500 text-white font-bold rounded-xl transition duration-200 text-lg shadow-md shadow-violet-500/30"
+                className="mt-3 px-4 py-2.5 bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-500 text-white font-bold rounded-lg transition duration-200 text-base shadow-md shadow-violet-500/30"
               >
                 {editingProduct ? 'Actualizar Producto' : 'Crear Producto'}
               </button>
