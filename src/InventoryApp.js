@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit, Trash2, Download, Star, X } from 'lucide-react';
 import { supabase } from './supabaseClient';
 import { compressImage } from './utils/imageCompressor';
+import Quagga from '@ericblade/quagga2';
 
 // Helper component for confirmation dialogs
 const ConfirmationDialog = ({ message, onConfirm, onCancel }) => (
@@ -44,6 +45,7 @@ const InventoryApp = () => {
     sistemamedida: 'unidad',
     fotoproducto: '',
     fotocodigobarras: '',
+    barcodeNumber: '', // Added field to store extracted barcode number
     procedencia: 'Estrellita'
   });
 
@@ -85,7 +87,7 @@ const InventoryApp = () => {
     }
   };
 
-  // --- MODIFIED: Handle file input and Base64 conversion with compression ---
+  // --- MODIFIED: Handle file input and Base64 conversion with compression and barcode scanning ---
   const handleInputChange = async (e) => {
     const { name, value, type, files } = e.target;
     
@@ -103,6 +105,55 @@ const InventoryApp = () => {
             ...prev,
             [name]: compressedImage // Store compressed Base64 string (data URL)
           }));
+          
+          // If this is the barcode image, try to extract the barcode number
+          if (name === 'fotocodigobarras') {
+            try {
+              // Create a temporary image to process with Quagga
+              const img = new Image();
+              img.src = compressedImage;
+              
+              img.onload = () => {
+                // Create a canvas to convert the image to the format Quagga needs
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+                
+                // Try to decode the barcode
+                Quagga.decodeSingle({
+                  decoder: {
+                    readers: [
+                      "code_128_reader", 
+                      "ean_reader", 
+                      "ean_8_reader", 
+                      "code_39_reader", 
+                      "code_39_vin_reader", 
+                      "codabar_reader", 
+                      "upc_reader", 
+                      "upc_e_reader", 
+                      "i2of5_reader"
+                    ] 
+                  },
+                  src: compressedImage
+                }, (result) => {
+                  if(result && result.codeResult && result.codeResult.code) {
+                    // Extracted barcode number found!
+                    setFormData(prev => ({
+                      ...prev,
+                      barcodeNumber: result.codeResult.code // Store the extracted barcode number
+                    }));
+                    showNotification(`Código de barras detectado: ${result.codeResult.code}`, 'success');
+                  } else {
+                    console.log("No barcode detected in the image");
+                  }
+                });
+              };
+            } catch (scanError) {
+              console.error("Error scanning barcode:", scanError);
+            }
+          }
         } catch (error) {
           console.error("Error compressing image:", error);
           // Fallback to original method if compression fails
@@ -178,7 +229,9 @@ const InventoryApp = () => {
       ...formData,
       preciopublico: parseFloat(preciopublico),
       costoproveedor: parseFloat(costoproveedor),
-      cantidad: parseInt(cantidad)
+      cantidad: parseInt(cantidad),
+      // Include the barcode number if it was extracted
+      barcodeNumber: formData.barcodeNumber || null
     };
 
     try {
@@ -225,6 +278,7 @@ const InventoryApp = () => {
       // Load Base64 string or URL
       fotoproducto: product.fotoproducto, 
       fotocodigobarras: product.fotocodigobarras,
+      barcodeNumber: product.barcodeNumber || '', // Preserve the barcode number if it exists
       procedencia: product.procedencia
     });
     setShowModal(true);
@@ -263,6 +317,7 @@ const InventoryApp = () => {
       sistemamedida: 'unidad',
       fotoproducto: 'https://placehold.co/300x200/555555/ffffff?text=Producto', // Default placeholder URL
       fotocodigobarras: 'https://placehold.co/300x100/333333/ffffff?text=CDB', // Default placeholder URL
+      barcodeNumber: '', // Initialize barcode number as empty
       procedencia: 'Estrellita'
     });
     setShowModal(true);
@@ -604,6 +659,14 @@ const InventoryApp = () => {
                 />
               </div>
               {/* -------------------------------------------------------- */}
+
+              {/* Display extracted barcode number if available */}
+              {formData.barcodeNumber && (
+                <div className="mt-3 p-3 bg-emerald-500/20 rounded-lg border border-emerald-500/30">
+                  <p className="text-emerald-400 font-medium text-sm">Código de barras detectado:</p>
+                  <p className="text-white font-mono text-base">{formData.barcodeNumber}</p>
+                </div>
+              )}
 
               <button
                 type="submit"
